@@ -9,7 +9,7 @@ headers = {
 }
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
-output_path = os.path.join(script_dir, 'bmw_prices.csv')
+output_path = os.path.join(script_dir, 'bmw_prices_150page.csv')
 os.makedirs(script_dir, exist_ok=True)
 file_headers = ['Модель', 'Год', 'Пробег', 'Цена', 'Описание']
 with open(output_path, 'w', encoding='utf-8') as f:
@@ -47,9 +47,11 @@ def clean_mileage(mileage_str: str):
                .strip())
 
 cars_data = []
-n_pages = 10
+parsed_pages = []
+error_pages = []
+n_pages = 120
 print(f" === Начинаю парсить страницы ({n_pages} шт.) === ")
-for page in range(1, n_pages+1):
+for page in [150]:
     print(f" * Парсинг страницы #{page}...")
     url = f"https://cars.av.by/filter?brands[0][brand]=8&page={page}"
     
@@ -76,6 +78,7 @@ for page in range(1, n_pages+1):
                     'Пробег': mileage
                 })
             except Exception as e:
+                error_pages.append(page)
                 print(f"Ошибка в карточке: {e}")
                 continue
         
@@ -83,14 +86,22 @@ for page in range(1, n_pages+1):
             for car in cars_data:
                 row = ','.join([str(car[param]) for param in file_headers]) + '\n'
                 f.write(row)
+        parsed_pages.append(page)
                 
         print(f" >> Сохранено {len(cars_data)} записей")
         cars_data.clear()
+        print(f" $$ Сохранены данные для страниц {parsed_pages}")
         
         sleep(randint(2, 5))  # Задержка между запросами
         
     except requests.RequestException as e:
+        error_pages.append(page)
         print(f"Ошибка запроса: {e}")
         continue
     
 print(f" // Результат сохранен в {output_path}")
+print(f" // Парсинг завершен. Результаты:")
+print(f" // - Парсинг прошел успешно для {len(parsed_pages)} страниц")
+print(f" // - Ошибки возникли для {len(error_pages)} страниц")
+print(f" // - Список ошибок: {error_pages}")
+print(f" // Список успешно обработанных страниц: {parsed_pages}")
