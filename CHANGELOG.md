@@ -1,5 +1,14 @@
 # Changelog
 
+## 25-июнь-2025
+
+### Добавлено
+- Файл `bmw_preprocessed.csv` с предобработанными данными для дальнейшего использования
+
+### Изменено
+- Имя Jupyter-ноубука `EDA.ipynb` изменено на `bmw_data_preprocessing.ipynb`
+- В ноутбуке `bmw_data_preprocessing.ipynb` добавлена логика по обработке данных из файла `bmw_data.csv`
+
 ## 23-июнь-2025
 
 ### Добавлено
